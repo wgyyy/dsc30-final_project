@@ -156,10 +156,13 @@ public class UserTest {
         Question p18 = new Question(scott, placeHolder, placeHolder, "chaining", "DSC30", "p18");
         Question p19 = new Question(scott, placeHolder, placeHolder, "linear probing", "DSC30", "p19");
         Question p20 = new Question(scott, placeHolder, placeHolder, "quadratic probing", "DSC30", "p20");
-        Question[] list = new Question[]{p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20};
+        Question p21 = new Question(scott, placeHolder, "a", "quadratic probing", "DSC30", "p21");
+        Question p22 = new Question(me, placeHolder, "b", "quadratic probing", "DSC30", "p22");
+        Question[] list = new Question[]{p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22};
         for (int i = 0; i < list.length; i ++) {
             scott.addPost(DSC, list[i]);
         }
+        Post[] tes = DSC.retrievePost("quadratic probing");
         Post[] expected = new Post[] {p10,p11,p12,p13,p14,p15,p16,p17,p18,p19};
         Post[] result = me.searchKSimilarPosts(DSC,"hash table",10);
         Post[] expected2 = new Post[] {p7,p8,p9,null,null,null,null};
@@ -174,9 +177,9 @@ public class UserTest {
         Student Tom = new Student("A131313", "Tom");
         Student Jack = new Student("A132", "Jack");
         Question test = new Question(me, "Final", "1");
-        Question test2 = new Question(me, "PA9", "What's the due date?", "PA9", "DSC30", "2");
-        Question test3 = new Question(me, "PA9q1", "What's the number?", "PA9", "DSC30", "2");
-        Question test4 = new Question(me, "PA9q2", "What's the answer?", "PA9", "DSC30", "2");
+        Question test2 = new Question(me, "PA9", "What's the due date?", "PA9", "DSC30", "q0");
+        Question test3 = new Question(me, "PA9q1", "What's the number?", "PA9", "DSC30", "q1");
+        Question test4 = new Question(me, "PA9q2", "What's the answer?", "PA9", "DSC30", "q2");
         Instructor Dr_K = new Instructor("Dr.K");
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
         DSC.activatePiazza(Dr_K);
@@ -188,7 +191,7 @@ public class UserTest {
         me.addPost(DSC,test3);
         me.addPost(DSC,test4);
         assertEquals(new Post[]{test3,test4}, me.getPost("PA9", 2, DSC));
-        assertEquals(new Post[]{test,test3,test4}, me.getPost("PA9",1,DSC));
+        assertEquals(new Post[]{test2,test3,test4}, me.getPost("PA9",1,DSC));
 
     }
 

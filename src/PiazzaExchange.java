@@ -1,5 +1,6 @@
 import sun.rmi.runtime.Log;
 
+import javax.net.ssl.SSLEngineResult;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -10,6 +11,10 @@ public class PiazzaExchange {
     ArrayList<User> users;
     ArrayList<Post> posts;
     ArrayList<Post> unanswered;
+    Hashtable<Integer, ArrayList<Post>> priorityHashtable;
+    Hashtable<String,ArrayList<Post>> postHashtable;
+    Hashtable<User,ArrayList<Post>> userHashtable;
+    Hashtable<String,Post> unansweredHashtable;
     String status;
     boolean selfEnroll;
     private Forest keywordForest;
@@ -32,6 +37,9 @@ public class PiazzaExchange {
         this.posts = new ArrayList<>();
         this.unanswered = new ArrayList<>();
         this.keywordForest = new Forest();
+        this.postHashtable = new Hashtable<>(50);
+        this.userHashtable = new Hashtable<>(50);
+        this.unansweredHashtable = new Hashtable<>(50);
         this.initializeForest();
     }
 
@@ -53,6 +61,9 @@ public class PiazzaExchange {
         this.posts = new ArrayList<>();
         this.unanswered = new ArrayList<>();
         this.keywordForest = new Forest();
+        this.postHashtable = new Hashtable<>(50);
+        this.userHashtable = new Hashtable<>(50);
+        this.unansweredHashtable = new Hashtable<>(50);
         this.initializeForest();
     }
 
@@ -182,18 +193,17 @@ public class PiazzaExchange {
         if (this.users.contains(u) || Objects.equals(this.status, "inactive")){
             return false;
         } else {
-            if (requester == u) {
-                if (!this.selfEnroll) {
-                    return false;
-                }
-                this.users.add(u);
-                u.courses.add(this);
-                return true;
-            }
             if ((requester.getClass() == Instructor.class) || (requester.getClass() == Tutor.class)) {
                 this.users.add(u);
                 u.courses.add(this);
                 return true;
+            }
+            if (this.selfEnroll) {
+                if (requester == u) {
+                    this.users.add(u);
+                    u.courses.add(this);
+                    return true;
+                }
             }
             return false;
         }
@@ -219,17 +229,46 @@ public class PiazzaExchange {
      * @throws OperationDeniedException when the action is not allowed
      */
     public void addPostToDatabase(User u, Post p) throws OperationDeniedException {
+        /*
         if ((!this.users.contains(u)) || (this.status=="inactive")) {
             throw new OperationDeniedException();
         }
         this.posts.add(p);
         u.posts.add(p);
         u.numOfPostSubmitted++;
-        try{
-            this.keywordForest.nodeLookUp(p.getKeyword()).addNewPost(p);
+        this.keywordForest.insert(p);
+         */
+        //Hashtable<String,Hashtable<String,ArrayList<Post>>> postHashtable;
+        if ((!this.users.contains(u)) || (Objects.equals(this.status, "inactive"))) {
+            throw new OperationDeniedException();
         }
-        catch (IllegalArgumentException | NullPointerException ignored) {
+        this.keywordForest.insert(p);
+        ArrayList<Post> list;
+        String keyword;
+        if (p.getKeyword() == null) {
+            keyword = "null";
+        } else {
+            keyword = p.getKeyword();
         }
+        if (!postHashtable.containsKey(keyword)){
+            list = new ArrayList<>();
+        } else {
+            list = postHashtable.get(keyword);
+            list.add(p);
+        }
+        postHashtable.put(keyword,list);
+        if (!userHashtable.containsKey(p.getPoster())){
+            list = new ArrayList<>();
+        } else {
+            list = userHashtable.get(p.getPoster());
+            list.add(p);
+        }
+        userHashtable.put(p.poster,list);
+        this.posts.add(p);
+        this.unansweredHashtable.put(p.UID,p);
+        u.posts.add(p);
+        u.numOfPostSubmitted++;
+
     }
 
     /**
@@ -240,11 +279,36 @@ public class PiazzaExchange {
      * @return the post array that contains every single post that has the keyword
      */
     public Post[] retrievePost(User u, String keyword){
+        /*
         ArrayList<Post> record = new ArrayList<>();
         for (int i = 0; i<this.posts.size(); i++) {
             if ((u.posts.contains(this.posts.get(i))) && (Objects.equals(this.posts.get(i).getKeyword(), keyword))) {
                 record.add(this.posts.get(i));
             }
+        }
+        Post[] return_list = new Post[record.size()];
+        int count = 0;
+        while (!record.isEmpty()) {
+            return_list[count] = record.get(0);
+            record.remove(0);
+            count++;
+        }
+        return return_list;
+         */
+        ArrayList<Post> record_key = new ArrayList<>();
+        ArrayList<Post> record_user = new ArrayList<>();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            if (i.getKey() == keyword)
+                record_key.addAll(i.getValue());
+            }
+        for (Map.Entry<User,ArrayList<Post>> i : userHashtable.entrySet()) {
+            if (i.getKey() == u)
+                record_user.addAll(i.getValue());
+        }
+        ArrayList<Post> record = new ArrayList<>();
+        for (int i = 0; i < record_key.size(); i ++) {
+            if (record_user.contains(record_key.get(i)))
+                record.add(record_key.get(i));
         }
         Post[] return_list = new Post[record.size()];
         int count = 0;
@@ -263,6 +327,7 @@ public class PiazzaExchange {
      * @return the post array that contains every single post that has the keyword
      */
     public Post[] retrievePost(String keyword){
+        /*
         ArrayList<Post> record = new ArrayList<>();
         for (int i = 0; i<this.posts.size(); i++) {
             if (Objects.equals(this.posts.get(i).getKeyword(), keyword)) {
@@ -277,6 +342,20 @@ public class PiazzaExchange {
             count++;
         }
         return return_list;
+         */
+        ArrayList<Post> record_key = new ArrayList<>();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            if (Objects.equals(i.getKey(), keyword))
+                record_key.addAll(i.getValue());
+        }
+        Post[] return_list = new Post[record_key.size()];
+        int count = 0;
+        while (!record_key.isEmpty()) {
+            return_list[count] = record_key.get(0);
+            record_key.remove(0);
+            count++;
+        }
+        return return_list;
     }
 
     /**
@@ -286,6 +365,7 @@ public class PiazzaExchange {
      * @return the post array that contains every single post that has specified poster u
      */
     public Post[] retrievePost(User u) {
+        /*
         ArrayList<Post> record = new ArrayList<>();
         for (int i = 0; i<this.posts.size(); i++) {
             if (u.posts.contains(this.posts.get(i))) {
@@ -297,6 +377,21 @@ public class PiazzaExchange {
         while (!record.isEmpty()) {
             return_list[count] = record.get(0);
             record.remove(0);
+            count++;
+        }
+        return return_list;
+         */
+        ArrayList<Post> record_user = new ArrayList<>();
+
+        for (Map.Entry<User,ArrayList<Post>> i : userHashtable.entrySet()) {
+            if (Objects.equals(i.getKey(), u))
+                record_user.addAll(i.getValue());
+        }
+        Post[] return_list = new Post[record_user.size()];
+        int count = 0;
+        while (!record_user.isEmpty()) {
+            return_list[count] = record_user.get(0);
+            record_user.remove(0);
             count++;
         }
         return return_list;
@@ -312,7 +407,8 @@ public class PiazzaExchange {
      * @throws OperationDeniedException when the action is denied
      */
     public boolean deletePostFromDatabase(User u, Post p) throws OperationDeniedException {
-        if (!(u.getClass() == Instructor.class)) {
+        /*
+         if (!(u.getClass() == Instructor.class)) {
             throw new OperationDeniedException();
         }
         if (!this.posts.contains(p)) {
@@ -320,6 +416,18 @@ public class PiazzaExchange {
         }
         this.posts.remove(p);
         return true;
+         */
+        if (!(u.getClass() == Instructor.class)) {
+            throw new OperationDeniedException();
+        }
+        if (postHashtable.containsKey(p.getKeyword())) {
+            if (postHashtable.get(p.getKeyword()).contains(p)) {
+                postHashtable.get(p.getKeyword()).remove(p);
+                userHashtable.get(p.getPoster()).remove(p);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -329,13 +437,22 @@ public class PiazzaExchange {
      * @return the Post with the highest urgency rating
      */
     public Post computeMostUrgentQuestion() {
-        int most_urgent = 0;
-        for (int i = 0; i < this.unanswered.size(); i++) {
-            if(this.unanswered.get(most_urgent).compareTo(this.unanswered.get(i)) > 0) {
-                most_urgent = i;
+        ArrayList<Integer> priority_count = new ArrayList<>();
+        this.priorityHashtable = new Hashtable<>(50);
+        for (Map.Entry<String ,Post> i : unansweredHashtable.entrySet()) {
+            int priority = i.getValue().calculatePriority();
+            if(!priorityHashtable.containsKey(priority)) {
+                ArrayList<Post> list = new ArrayList<>();
+                priorityHashtable.put(priority,list);
+                priority_count.add(priority);
+            } else {
+                ArrayList<Post> list = priorityHashtable.get(priority);
+                list.add(i.getValue());
             }
         }
-        return this.unanswered.get(most_urgent);
+        Collections.sort(priority_count);
+        return priorityHashtable.get(priority_count.get(0)).get(0);
+
     }
 
     /**
@@ -346,6 +463,7 @@ public class PiazzaExchange {
      * @throws OperationDeniedException when the operation is denied
      */
     public Post[] computeTopKUrgentQuestion(int k) throws OperationDeniedException{
+        /*
         if (k > this.posts.size()) {
             throw new OperationDeniedException();
         }
@@ -353,9 +471,6 @@ public class PiazzaExchange {
         return_list[0] = this.posts.get(0);
         int count = 1;
         for (int i = 1; i < this.posts.size(); i++) {
-            /*
-            loop through the posts list
-             */
             int count2 = count;
             while (return_list[count2].compareTo(this.posts.get(i)) < 0) {
                 count2--;
@@ -372,6 +487,33 @@ public class PiazzaExchange {
             }
         }
         return  return_list;
+         */
+        ArrayList<Integer> priority_count = new ArrayList<>();
+        this.priorityHashtable = new Hashtable<>(50);
+        for (Map.Entry<String ,Post> i : unansweredHashtable.entrySet()) {
+            int priority = i.getValue().calculatePriority();
+            if(!priorityHashtable.containsKey(priority)) {
+                ArrayList<Post> list = new ArrayList<>();
+                priorityHashtable.put(priority,list);
+                priority_count.add(priority);
+            } else {
+                ArrayList<Post> list = priorityHashtable.get(priority);
+                list.add(i.getValue());
+            }
+        }
+        Collections.sort(priority_count);
+        Post[] return_list = new Post[k];
+        int current = 0;
+        int count = 0;
+        for (int i = 0; i < k; i++) {
+            if (priorityHashtable.get(priority_count.get(current)).size() == count) {
+                current++;
+                count=0;
+            }
+            return_list[i] = priorityHashtable.get(priority_count.get(current)).get(count);
+            count++;
+        }
+        return return_list;
     }
 
     /**
@@ -387,7 +529,7 @@ public class PiazzaExchange {
         if (!this.posts.contains(p)) {
             throw new OperationDeniedException();
         }
-        this.unanswered.remove(p);
+        this.unansweredHashtable.remove(p.UID);
         u.answerQuestion(p,response);
         return p;
     }

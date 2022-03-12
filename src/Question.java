@@ -62,7 +62,7 @@ public class Question extends Post {
      */
     @Override
     public String toString() {
-        return this.getKeyword();
+        return this.UID;
     }
 
     /**

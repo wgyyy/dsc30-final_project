@@ -144,13 +144,15 @@ public class Forest {
      * @param post insert the post according to the post's key
      */
     public void insert(Post post) {
-        String adjusted_key = post.getKeyword().toLowerCase(Locale.ROOT);
-        if (this.forest.containsKey(adjusted_key)) {
-            this.getPosts(adjusted_key).add(post);
-        } else {
-            InternalNode to_be_insert = new InternalNode(adjusted_key, post);
-            this.forest.put(adjusted_key, to_be_insert);
-            this.treeCount++;
+        if (post.getKeyword() != null) {
+            String adjusted_key = post.getKeyword().toLowerCase(Locale.ROOT);
+            if (this.forest.containsKey(adjusted_key)) {
+                this.getPosts(adjusted_key).add(post);
+            } else {
+                InternalNode to_be_insert = new InternalNode(adjusted_key, post);
+                this.forest.put(adjusted_key, to_be_insert);
+                this.treeCount++;
+            }
         }
     }
 
@@ -210,6 +212,9 @@ public class Forest {
      * @return the children of that specific node
      */
     public String[] queryConnection(String key) {
+        if (!this.forest.containsKey(key.toLowerCase(Locale.ROOT))) {
+            return null;
+        }
         String[] return_list = new String[this.nodeLookUp(key).children.size()];
         for (int i = 0; i < return_list.length; i++) {
             return_list[i] = this.nodeLookUp(key).children.get(i).getKey();

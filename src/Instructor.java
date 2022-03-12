@@ -36,8 +36,11 @@ public class Instructor extends User{
 
     public Post deletePost(Post p, PiazzaExchange piazza) {
         try {
-            piazza.deletePostFromDatabase(this, p);
-            return p;
+            if (piazza.deletePostFromDatabase(this, p)){
+                return p;
+            }else {
+                return null;
+            }
         } catch (OperationDeniedException e) {
             return null;
         }
