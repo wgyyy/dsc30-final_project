@@ -74,6 +74,7 @@ public class PostTest {
         LocalDate current = LocalDate.of(2022, 3,9);
         test.setDate(newtime);
         test2.setDate(current);
+        System.out.println(test.calculatePriority());
         assertEquals(9,test.compareTo(test2));
     }
 

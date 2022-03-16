@@ -18,11 +18,16 @@ public class Student extends User{
 
     @Override
     public boolean endorsePost(Post p) {
-        if (!p.isPrivate) {
-            p.endorsementCount++;
-            return true;
+        if (p.isPrivate) {
+            if (p.getPoster() ==  this) {
+                p.endorsementCount++;
+                return true;
+            }else {
+                return false;
+            }
         }
-        return false;
+        p.endorsementCount++;
+        return true;
     }
 
     @Override
