@@ -2,6 +2,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -63,13 +64,18 @@ public class UserTest {
 
     @Test
     public void editPost() throws OperationDeniedException {
+        ArrayList<User> roster = new ArrayList<>();
         Student me = new Student("A16", "Gaoying Wang");
         Student Tom = new Student("A131313", "Tom");
         Student Jack = new Student("A132", "Jack");
+        roster.add(me);
+        roster.add(Tom);
+        roster.add(Jack);
         Question test = new Question(me, "Final", "1");
         Question test2 = new Question(me, "PA9", "What's the due date?", "PA9", "DSC30", "2");
         Instructor Dr_K = new Instructor("Dr.K");
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
+        PiazzaExchange DSC20 = new PiazzaExchange(Dr_K, roster);
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
