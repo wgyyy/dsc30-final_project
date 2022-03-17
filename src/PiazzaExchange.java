@@ -8,12 +8,6 @@ public class PiazzaExchange {
 
     String courseID;
     Instructor instructor;
-    /*
-    ArrayList<User> users;
-    ArrayList<Post> posts;
-    ArrayList<Post> unanswered;
-
-     */
     Hashtable<Integer, ArrayList<Post>> priorityHashtable;
     Hashtable<String,ArrayList<Post>> postHashtable;
     Hashtable<User,ArrayList<Post>> userHashtable;
@@ -36,12 +30,6 @@ public class PiazzaExchange {
         this.courseID = courseID;
         this.selfEnroll = selfEnroll;
         this.status = "inactive";
-        /*
-        this.users = new ArrayList<>();
-        this.posts = new ArrayList<>();
-        this.unanswered = new ArrayList<>();
-
-         */
         this.keywordForest = new Forest();
         this.postHashtable = new Hashtable<>(50);
         this.userHashtable = new Hashtable<>(50);
@@ -63,12 +51,6 @@ public class PiazzaExchange {
         this.selfEnroll = false;
         this.courseID = "DSC30";
         this.status = "inactive";
-        /*
-        this.users = roster;
-        this.posts = new ArrayList<>();
-        this.unanswered = new ArrayList<>();
-
-         */
         this.keywordForest = new Forest();
         this.postHashtable = new Hashtable<>(50);
         this.userHashtable = new Hashtable<>(50);
@@ -117,32 +99,6 @@ public class PiazzaExchange {
                 }
             }
         }
-        /*
-        if (this.posts.size() == 0) {
-            return return_list;
-        } if (this.posts.size() == 1) {
-            return_list[0] = this.posts.get(0);
-            return  return_list;
-        }
-        return_list[0] = this.posts.get(0);
-        if (this.posts.get(1).endorsementCount > return_list[0].endorsementCount) {
-            return_list[0] = this.posts.get(1);
-            return_list[1] = this.posts.get(0);
-        } else {
-            return_list[1] = this.posts.get(1);
-        }
-        for (int i = 2; i < this.posts.size(); i++) {
-            if (this.posts.get(i).endorsementCount > return_list[0].endorsementCount) {
-                return_list[1] = return_list[0];
-                return_list[0] = this.posts.get(i);
-            } else {
-                if (this.posts.get(i).endorsementCount > return_list[1].endorsementCount) {
-                    return_list[1] = this.posts.get(i);
-                }
-            }
-        }
-
-         */
         return return_list;
     }
 
@@ -175,18 +131,6 @@ public class PiazzaExchange {
             }
             return_list[i] = count;
         }
-        /*
-        for (int i = 0; i < 30; i++) {
-            count = 0;
-            for (int n = 0; n < this.posts.size(); n++) {
-                if (this.posts.get(n).getDate().until(LocalDate.now()).getDays() == i) {
-                    count++;
-                }
-            }
-            return_list[i] = count;
-        }
-
-         */
         return return_list;
     }
 
@@ -211,18 +155,6 @@ public class PiazzaExchange {
             }
             return_list[i] = count;
         }
-        /*
-        for (int i = 0; i < 12; i++) {
-            count =0;
-            for (int n = 0; n < this.posts.size(); n++) {
-                if (this.posts.get(n).getDate().getMonthValue() == (i + 1)) {
-                    count++;
-                }
-            }
-            return_list[i] = count;
-        }
-
-         */
         return return_list;
     }
 
@@ -285,26 +217,6 @@ public class PiazzaExchange {
             }
             return false;
         }
-        /*
-        if (this.users.contains(u) || Objects.equals(this.status, "inactive")){
-            return false;
-        } else {
-            if ((requester.getClass() == Instructor.class) || (requester.getClass() == Tutor.class)) {
-                this.users.add(u);
-                u.courses.add(this);
-                return true;
-            }
-            if (this.selfEnroll) {
-                if (requester == u) {
-                    this.users.add(u);
-                    u.courses.add(this);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-         */
     }
 
     /**
@@ -550,12 +462,6 @@ public class PiazzaExchange {
         if(!this.postHashtable.get(p.getKeyword()).contains(p)) {
             throw new OperationDeniedException();
         }
-        /*
-        if (!this.posts.contains(p)) {
-            throw new OperationDeniedException();
-        }
-
-         */
         u.answerQuestion(p,response);
         this.unansweredHashtable.remove(p.UID);
         return p;
@@ -589,19 +495,6 @@ public class PiazzaExchange {
                             + " posts, received " + users.get(i).numOfEndorsement +
                             " endorsements.\n";
                 }
-            /*
-            String return_statement = "";
-            for (int i = 0; i < this.users.size(); i++) {
-                if (this.users.get(i).getClass() == Student.class) {
-                    return_statement = return_statement + this.users.get(i).username
-                            + " submitted "
-                            + this.users.get(i).numOfPostSubmitted + " posts, answered "
-                            + this.users.get(i).numOfPostsAnswered
-                            + " posts, received " + this.users.get(i).numOfEndorsement +
-                            " endorsements.\n";
-                }
-
-             */
             }
             return return_statement;
         }
@@ -624,12 +517,6 @@ public class PiazzaExchange {
             if (posts.contains(u.posts.get(i))) {
                 return_l.add(u.posts.get(i));
             }
-            /*
-            if (this.posts.contains(u.posts.get(i))) {
-                return_l.add(u.posts.get(i));
-            }
-
-             */
         }
         ArrayList<Post> return_list = new ArrayList<>();
         while (!return_l.isEmpty()) {
@@ -665,12 +552,6 @@ public class PiazzaExchange {
             if (posts.contains(u.posts.get(i))) {
                 return_l.add(u.posts.get(i));
             }
-            /*
-            if (this.posts.contains(u.posts.get(i))) {
-                return_l.add(u.posts.get(i));
-            }
-
-             */
         }
         ArrayList<Post> return_list = new ArrayList<>();
         int count = 0;
