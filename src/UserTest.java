@@ -422,4 +422,55 @@ public class UserTest {
         scott.endorsePost(p23);
         DSC.answerQuestion(me,p21,"No");
     }
+
+    @Test
+    public void OT() throws OperationDeniedException {
+        Student me = new Student("A16", "Gaoying Wang");
+        Student Tom = new Student("A131313", "Tom");
+        Student Jack = new Student("A132", "Jack");
+        Question test = new Question(me, "Final", "1");
+        Question test2 = new Question(me, "PA9", "What's the due date?", "PA9", "DSC30", "2");
+        Instructor Dr_K = new Instructor("Dr.K");
+        PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
+        DSC.activatePiazza(Dr_K);
+        me.enrollClass(DSC);
+        Tom.enrollClass(DSC);
+        Jack.enrollClass(DSC);
+        String placeHolder = ":-)";
+        Tutor scott = new Tutor("A16145", "Scott");
+        scott.enrollClass(DSC);
+        Question p1 = new Question(scott, placeHolder, placeHolder, "linkedlist", "DSC30", "P1");
+        Question p2 = new Question(scott, placeHolder, placeHolder, "SLL", "DSC30", "p2");
+        Question p3 = new Question(scott, placeHolder, placeHolder, "DLL", "DSC30", "p3");
+        Question p4 = new Question(scott, placeHolder, placeHolder, "midterm", "DSC30", "p4");
+        Question p5 = new Question(scott, placeHolder, placeHolder, "BST", "DSC30", "p5");
+        Question p6 = new Question(scott, placeHolder, placeHolder, "tree", "DSC30", "p6");
+        Question p7 = new Question(scott, placeHolder, placeHolder, "heap", "DSC30", "p7");
+        Question p8 = new Question(scott, placeHolder, placeHolder, "queue", "DSC30", "p8");
+        Question p9 = new Question(scott, placeHolder, placeHolder, "priority queue", "DSC30", "p9");
+        Question p10 = new Question(scott, placeHolder, placeHolder, "hash table", "DSC30", "p10");
+        Question p11 = new Question(scott, placeHolder, placeHolder, "collision", "DSC30", "p11");
+        Question p12 = new Question(scott, placeHolder, placeHolder, "element", "DSC30", "p12");
+        Question p13 = new Question(scott, placeHolder, placeHolder, "hash function", "DSC30", "p13");
+        Question p14 = new Question(scott, placeHolder, placeHolder, "Bloom filters", "DSC30", "p14");
+        Question p15 = new Question(scott, placeHolder, placeHolder, "probing", "DSC30", "p15");
+        Question p16 = new Question(scott, placeHolder, placeHolder, "double hashing", "DSC30", "p16");
+        Question p17 = new Question(scott, placeHolder, placeHolder, "rehash", "DSC30", "p17");
+        Question p18 = new Question(scott, placeHolder, placeHolder, "chaining", "DSC30", "p18");
+        Question p19 = new Question(scott, placeHolder, placeHolder, "linear probing", "DSC30", "p19");
+        Question p20 = new Question(scott, placeHolder, placeHolder, "quadratic probing", "DSC30", "p20");
+        Question p21 = new Question(scott, placeHolder, "a", "quadratic probing", "DSC30", "p21");
+        Question p22 = new Question(me, placeHolder, "b", "quadratic probing", "DSC30", "p22");
+        Question p23 = new Question(me, placeHolder, "c", "quadratic probing", "DSC30", "p23");
+        LocalDate newtime1 = LocalDate.of(2022, 2,20);
+        LocalDate newtime2 = LocalDate.of(2022, 2,10);
+        LocalDate newtime3 = LocalDate.of(2022, 2,5);
+        LocalDate current = LocalDate.of(2022, 3,9);
+        p1.setDate(newtime1);
+        p2.setDate(newtime2);
+        p3.setDate(newtime3);
+        System.out.println(p1.getDate());
+        p1.setDate(newtime2);
+        System.out.println(p1.getDate());
+    }
 }
