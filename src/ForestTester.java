@@ -30,10 +30,10 @@ public class ForestTester {
     public void Test() {
         forest.insert(p1.getKeyword());
         forest.insert(p2);
-
         forest.addConnection("midterm", "BST");
 
         String[] output = forest.queryConnection("midterm");
+
     }
 
     @Test

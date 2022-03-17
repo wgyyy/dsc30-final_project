@@ -163,11 +163,8 @@ public class Forest {
      * @param key querying the internal node with this specific key
      */
     public InternalNode nodeLookUp(String key) {
-        String adjusted_key = key.toLowerCase(Locale.ROOT);
-        if (!this.forest.containsKey(adjusted_key)) {
-            throw new IllegalArgumentException();
-        }
-        return this.forest.get(adjusted_key);
+        key = key.toLowerCase();
+        return forest.get(key);
     }
 
     /**
@@ -188,10 +185,24 @@ public class Forest {
      * @param children the array of children node's keys
      */
     public void addConnection(String parent, String[] children) {
-        InternalNode parentNode = this.nodeLookUp(parent);
-        for (int i = 0; i < children.length; i++) {
-            parentNode.addChildren(this.nodeLookUp(children[i]));
+        InternalNode parentNode = nodeLookUp(parent);
+        if (parentNode == null) {
+            this.insert(parent);
+            parentNode = nodeLookUp(parent);
         }
+        ArrayList<InternalNode> childrenList = new ArrayList<>();
+        for (String key: children) {
+            key = key.toLowerCase();
+            InternalNode node = nodeLookUp(key);
+            if (node != null) {
+                childrenList.add(node);
+            } else {
+                // if not exist, store it as empty node as placeholder
+                this.insert(key);
+                childrenList.add(nodeLookUp(key));
+            }
+        }
+        parentNode.setChildren(childrenList);
     }
 
     /**

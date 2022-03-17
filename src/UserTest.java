@@ -113,11 +113,6 @@ public class UserTest {
         LocalDate current = LocalDate.of(2022, 3,9);
         test2.setDate(newtime);
         int[] result = me.requestStats(DSC,1);
-        /*
-        for (int i = 0; i < result.length; i++) {
-            System.out.println(result[i]);
-        }
-         */
     }
 
     @Test
@@ -190,8 +185,6 @@ public class UserTest {
         Tom.addPost(DSC,test2);
         me.addPost(DSC,test3);
         me.addPost(DSC,test4);
-        System.out.println(Arrays.toString(me.getPost("PA9", 2, DSC)));
-        System.out.println(Arrays.toString(me.getPost("PA9",1,DSC)));
         assertEquals(new Post[]{test,test2,test4}, me.getPost("PA9",1,DSC));
         assertEquals(new Post[]{test2,test3,test4}, me.getPost("PA9",3,DSC));
 
@@ -263,7 +256,7 @@ public class UserTest {
                 "ddddddddddddddddddddddddd"));
 
          */
-        assertEquals("1",Dr_K.deletePost(test,DSC));
+        assertEquals(test,Dr_K.deletePost(test,DSC));
     }
 
     @Test
@@ -422,6 +415,5 @@ public class UserTest {
         Jack.endorsePost(p23);
         scott.endorsePost(p23);
         DSC.answerQuestion(me,p21,"No");
-        System.out.println(DSC.viewStats(me));
     }
 }
