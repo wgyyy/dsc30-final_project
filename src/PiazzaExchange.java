@@ -8,9 +8,12 @@ public class PiazzaExchange {
 
     String courseID;
     Instructor instructor;
+    /*
     ArrayList<User> users;
     ArrayList<Post> posts;
     ArrayList<Post> unanswered;
+
+     */
     Hashtable<Integer, ArrayList<Post>> priorityHashtable;
     Hashtable<String,ArrayList<Post>> postHashtable;
     Hashtable<User,ArrayList<Post>> userHashtable;
@@ -33,9 +36,12 @@ public class PiazzaExchange {
         this.courseID = courseID;
         this.selfEnroll = selfEnroll;
         this.status = "inactive";
+        /*
         this.users = new ArrayList<>();
         this.posts = new ArrayList<>();
         this.unanswered = new ArrayList<>();
+
+         */
         this.keywordForest = new Forest();
         this.postHashtable = new Hashtable<>(50);
         this.userHashtable = new Hashtable<>(50);
@@ -55,14 +61,20 @@ public class PiazzaExchange {
     public PiazzaExchange(Instructor instructor, ArrayList<User> roster) {
         this.instructor = instructor;
         this.selfEnroll = false;
-        this.users = roster;
         this.courseID = "DSC30";
         this.status = "inactive";
+        /*
+        this.users = roster;
         this.posts = new ArrayList<>();
         this.unanswered = new ArrayList<>();
+
+         */
         this.keywordForest = new Forest();
         this.postHashtable = new Hashtable<>(50);
         this.userHashtable = new Hashtable<>(50);
+        for (int i = 0; i < roster.size(); i ++) {
+            userHashtable.put(roster.get(i),new ArrayList<Post>());
+        }
         this.unansweredHashtable = new Hashtable<>(50);
         this.initializeForest();
     }
@@ -78,6 +90,34 @@ public class PiazzaExchange {
      */
     public Post[] computeTopTwoEndorsedPosts() {
         Post[] return_list = new Post[2];
+        ArrayList<Post> posts = new ArrayList();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            posts.addAll(i.getValue());
+        }
+        if (posts.size() == 0) {
+            return return_list;
+        } if (posts.size() == 1) {
+            return_list[0] = posts.get(0);
+            return  return_list;
+        }
+        return_list[0] = posts.get(0);
+        if (posts.get(1).endorsementCount > return_list[0].endorsementCount) {
+            return_list[0] = posts.get(1);
+            return_list[1] = posts.get(0);
+        } else {
+            return_list[1] = posts.get(1);
+        }
+        for (int i = 2; i < posts.size(); i++) {
+            if (posts.get(i).endorsementCount > return_list[0].endorsementCount) {
+                return_list[1] = return_list[0];
+                return_list[0] = posts.get(i);
+            } else {
+                if (posts.get(i).endorsementCount > return_list[1].endorsementCount) {
+                    return_list[1] = posts.get(i);
+                }
+            }
+        }
+        /*
         if (this.posts.size() == 0) {
             return return_list;
         } if (this.posts.size() == 1) {
@@ -101,6 +141,8 @@ public class PiazzaExchange {
                 }
             }
         }
+
+         */
         return return_list;
     }
 
@@ -120,6 +162,20 @@ public class PiazzaExchange {
         int[] return_list = new int[30];
         int count;
         LocalDate now = LocalDate.now();
+        ArrayList<Post> posts = new ArrayList();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            posts.addAll(i.getValue());
+        }
+        for (int i = 0; i < 30; i++) {
+            count = 0;
+            for (int n = 0; n < posts.size(); n++) {
+                if (posts.get(n).getDate().until(LocalDate.now()).getDays() == i) {
+                    count++;
+                }
+            }
+            return_list[i] = count;
+        }
+        /*
         for (int i = 0; i < 30; i++) {
             count = 0;
             for (int n = 0; n < this.posts.size(); n++) {
@@ -129,6 +185,8 @@ public class PiazzaExchange {
             }
             return_list[i] = count;
         }
+
+         */
         return return_list;
     }
 
@@ -140,6 +198,20 @@ public class PiazzaExchange {
     public int[] computeMonthlyPostStats(){
         int[] return_list = new int[12];
         int count;
+        ArrayList<Post> posts = new ArrayList();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            posts.addAll(i.getValue());
+        }
+        for (int i = 0; i < 12; i++) {
+            count =0;
+            for (int n = 0; n < posts.size(); n++) {
+                if (posts.get(n).getDate().getMonthValue() == (i + 1)) {
+                    count++;
+                }
+            }
+            return_list[i] = count;
+        }
+        /*
         for (int i = 0; i < 12; i++) {
             count =0;
             for (int n = 0; n < this.posts.size(); n++) {
@@ -149,6 +221,8 @@ public class PiazzaExchange {
             }
             return_list[i] = count;
         }
+
+         */
         return return_list;
     }
 
@@ -190,6 +264,28 @@ public class PiazzaExchange {
      * @return successfulness of the action call
      */
     public boolean enrollUserToDatabase(User requester, User u){
+        ArrayList<User> users = new ArrayList();
+        for (Map.Entry<User,ArrayList<Post>> i : userHashtable.entrySet()) {
+            users.add(i.getKey());
+        }
+        if (users.contains(u) || Objects.equals(this.status, "inactive")){
+            return false;
+        } else {
+            if ((requester.getClass() == Instructor.class) || (requester.getClass() == Tutor.class)) {
+                userHashtable.put(u,new ArrayList<>());
+                u.courses.add(this);
+                return true;
+            }
+            if (this.selfEnroll) {
+                if (requester == u) {
+                    userHashtable.put(u,new ArrayList<>());
+                    u.courses.add(this);
+                    return true;
+                }
+            }
+            return false;
+        }
+        /*
         if (this.users.contains(u) || Objects.equals(this.status, "inactive")){
             return false;
         } else {
@@ -207,6 +303,8 @@ public class PiazzaExchange {
             }
             return false;
         }
+
+         */
     }
 
     /**
@@ -229,7 +327,7 @@ public class PiazzaExchange {
      * @throws OperationDeniedException when the action is not allowed
      */
     public void addPostToDatabase(User u, Post p) throws OperationDeniedException {
-        if ((!this.users.contains(u)) || (Objects.equals(this.status, "inactive"))) {
+        if ((!this.userHashtable.containsKey(u)) || (Objects.equals(this.status, "inactive"))) {
             throw new OperationDeniedException();
         }
         this.keywordForest.insert(p);
@@ -254,7 +352,6 @@ public class PiazzaExchange {
         }
         list.add(p);
         userHashtable.put(p.poster,list);
-        this.posts.add(p);
         this.unansweredHashtable.put(p.UID,p);
         u.posts.add(p);
         u.numOfPostSubmitted++;
@@ -447,9 +544,18 @@ public class PiazzaExchange {
      * @throws OperationDeniedException when the operation is denied
      */
     public Post answerQuestion(User u, Post p, String response) throws OperationDeniedException{
+        if(!this.postHashtable.containsKey(p.getKeyword())) {
+            throw new OperationDeniedException();
+        }
+        if(!this.postHashtable.get(p.getKeyword()).contains(p)) {
+            throw new OperationDeniedException();
+        }
+        /*
         if (!this.posts.contains(p)) {
             throw new OperationDeniedException();
         }
+
+         */
         u.answerQuestion(p,response);
         this.unansweredHashtable.remove(p.UID);
         return p;
@@ -463,12 +569,27 @@ public class PiazzaExchange {
      * @return
      */
     public String viewStats(User u){
+        ArrayList<User> users = new ArrayList();
+        for (Map.Entry<User,ArrayList<Post>> i : userHashtable.entrySet()) {
+            users.add(i.getKey());
+        }
         if (u.getClass() == Student.class) {
             return u.username + " submitted " + u.numOfPostSubmitted
                     + " posts, answered " + u.numOfPostsAnswered
                     + " posts, received " + u.numOfEndorsement + " endorsements.";
         }
         else {
+            String return_statement = "";
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getClass() == Student.class) {
+                    return_statement = return_statement + users.get(i).username
+                            + " submitted "
+                            + users.get(i).numOfPostSubmitted + " posts, answered "
+                            + users.get(i).numOfPostsAnswered
+                            + " posts, received " + users.get(i).numOfEndorsement +
+                            " endorsements.\n";
+                }
+            /*
             String return_statement = "";
             for (int i = 0; i < this.users.size(); i++) {
                 if (this.users.get(i).getClass() == Student.class) {
@@ -479,6 +600,8 @@ public class PiazzaExchange {
                             + " posts, received " + this.users.get(i).numOfEndorsement +
                             " endorsements.\n";
                 }
+
+             */
             }
             return return_statement;
         }
@@ -492,11 +615,21 @@ public class PiazzaExchange {
      *      in this piazza
      */
     public Post[] retrieveLog(User u){
+        ArrayList<Post> posts = new ArrayList();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            posts.addAll(i.getValue());
+        }
         ArrayList<Post> return_l = new ArrayList<>();
         for (int i = 0; i < u.posts.size(); i++) {
+            if (posts.contains(u.posts.get(i))) {
+                return_l.add(u.posts.get(i));
+            }
+            /*
             if (this.posts.contains(u.posts.get(i))) {
                 return_l.add(u.posts.get(i));
             }
+
+             */
         }
         ArrayList<Post> return_list = new ArrayList<>();
         while (!return_l.isEmpty()) {
@@ -523,11 +656,21 @@ public class PiazzaExchange {
      * @return the posts array that satisfy the conditions
      */
     public Post[] retrieveLog(User u, int length){
+        ArrayList<Post> posts = new ArrayList();
+        for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
+            posts.addAll(i.getValue());
+        }
         ArrayList<Post> return_l = new ArrayList<>();
         for (int i = 0; i < u.posts.size(); i++) {
+            if (posts.contains(u.posts.get(i))) {
+                return_l.add(u.posts.get(i));
+            }
+            /*
             if (this.posts.contains(u.posts.get(i))) {
                 return_l.add(u.posts.get(i));
             }
+
+             */
         }
         ArrayList<Post> return_list = new ArrayList<>();
         int count = 0;

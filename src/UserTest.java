@@ -39,11 +39,11 @@ public class UserTest {
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
         me.enrollClass(DSC);
         assertEquals(false, me.courses.contains(DSC));
-        assertEquals(false, DSC.users.contains(me));
+        assertEquals(false, DSC.userHashtable.containsKey(me));
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         assertEquals(true, me.courses.contains(DSC));
-        assertEquals(true, DSC.users.contains(me));
+        assertEquals(true, DSC.userHashtable.containsKey(me));
     }
 
     @Test (expected = OperationDeniedException.class)
@@ -91,7 +91,7 @@ public class UserTest {
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
-        assertEquals(true,DSC.posts.contains(test));
+        assertEquals(true,DSC.postHashtable.get("null").contains(test));
     }
 
     @Test
