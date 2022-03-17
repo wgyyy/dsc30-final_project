@@ -469,8 +469,8 @@ public class UserTest {
         p1.setDate(newtime1);
         p2.setDate(newtime2);
         p3.setDate(newtime3);
-        System.out.println(p1.getDate());
-        p1.setDate(newtime2);
-        System.out.println(p1.getDate());
+        System.out.println(p1.answered);
+        scott.answerQuestion(p1,"y");
+        System.out.println(p1.answered);
     }
 }
