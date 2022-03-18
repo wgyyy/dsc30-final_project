@@ -8,10 +8,10 @@ public class PiazzaExchange {
 
     String courseID;
     Instructor instructor;
-    Hashtable<Integer, ArrayList<Post>> priorityHashtable;
-    Hashtable<String,ArrayList<Post>> postHashtable;
-    Hashtable<User,ArrayList<Post>> userHashtable;
-    Hashtable<String,Post> unansweredHashtable;
+    HashMap<Integer, ArrayList<Post>> priorityHashtable;
+    HashMap<String,ArrayList<Post>> postHashtable;
+    HashMap<User,ArrayList<Post>> userHashtable;
+    HashMap<String,Post> unansweredHashtable;
     String status;
     boolean selfEnroll;
     private Forest keywordForest;
@@ -31,9 +31,9 @@ public class PiazzaExchange {
         this.selfEnroll = selfEnroll;
         this.status = "inactive";
         this.keywordForest = new Forest();
-        this.postHashtable = new Hashtable<>(50);
-        this.userHashtable = new Hashtable<>(50);
-        this.unansweredHashtable = new Hashtable<>(50);
+        this.postHashtable = new HashMap<>(50);
+        this.userHashtable = new HashMap<>(50);
+        this.unansweredHashtable = new HashMap<>(50);
         this.initializeForest();
     }
 
@@ -52,12 +52,12 @@ public class PiazzaExchange {
         this.courseID = "DSC30";
         this.status = "inactive";
         this.keywordForest = new Forest();
-        this.postHashtable = new Hashtable<>(50);
-        this.userHashtable = new Hashtable<>(50);
+        this.postHashtable = new HashMap<>(50);
+        this.userHashtable = new HashMap<>(50);
         for (int i = 0; i < roster.size(); i ++) {
             userHashtable.put(roster.get(i),new ArrayList<Post>());
         }
-        this.unansweredHashtable = new Hashtable<>(50);
+        this.unansweredHashtable = new HashMap<>(50);
         this.initializeForest();
     }
 
@@ -241,11 +241,15 @@ public class PiazzaExchange {
         this.keywordForest.insert(p);
         ArrayList<Post> list;
         String keyword;
+        keyword = p.getKeyword();
+        /*
         if (p.getKeyword() == null) {
             keyword = "null";
         } else {
             keyword = p.getKeyword();
         }
+
+         */
         if (!postHashtable.containsKey(keyword)){
             list = new ArrayList<>();
         } else {
@@ -273,9 +277,12 @@ public class PiazzaExchange {
      * @return the post array that contains every single post that has the keyword
      */
     public Post[] retrievePost(User u, String keyword){
+        /*
         if (keyword == null) {
             keyword = "null";
         }
+
+         */
         ArrayList<Post> record_key = new ArrayList<>();
         ArrayList<Post> record_user = new ArrayList<>();
         for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
@@ -359,6 +366,7 @@ public class PiazzaExchange {
         if (!(u.getClass() == Instructor.class)) {
             throw new OperationDeniedException();
         }
+        /*
         if (p.getKeyword() != null) {
             if (postHashtable.containsKey(p.getKeyword())) {
                 if (postHashtable.get(p.getKeyword()).contains(p)) {
@@ -377,6 +385,15 @@ public class PiazzaExchange {
                 }
             }
         }
+
+         */
+        if (postHashtable.containsKey(p.getKeyword())) {
+            if (postHashtable.get(p.getKeyword()).contains(p)) {
+                postHashtable.get(p.getKeyword()).remove(p);
+                userHashtable.get(p.getPoster()).remove(p);
+                return true;
+            }
+        }
         return false;
     }
 
@@ -388,7 +405,7 @@ public class PiazzaExchange {
      */
     public Post computeMostUrgentQuestion() {
         ArrayList<Integer> priority_count = new ArrayList<>();
-        this.priorityHashtable = new Hashtable<>(50);
+        this.priorityHashtable = new HashMap<>(50);
         for (Map.Entry<String ,Post> i : unansweredHashtable.entrySet()) {
             int priority = i.getValue().calculatePriority();
             if(!priorityHashtable.containsKey(priority)) {
@@ -414,7 +431,7 @@ public class PiazzaExchange {
      */
     public Post[] computeTopKUrgentQuestion(int k) throws OperationDeniedException{
         ArrayList<Integer> priority_count = new ArrayList<>();
-        this.priorityHashtable = new Hashtable<>(50);
+        this.priorityHashtable = new HashMap<>(50);
         for (Map.Entry<String ,Post> i : unansweredHashtable.entrySet()) {
             int priority = i.getValue().calculatePriority();
             if(!priorityHashtable.containsKey(priority)) {

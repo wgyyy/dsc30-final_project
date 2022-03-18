@@ -97,7 +97,7 @@ public class UserTest {
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
-        assertEquals(true,DSC.postHashtable.get("null").contains(test));
+        assertEquals(true,DSC.postHashtable.get(test.getKeyword()).contains(test));
     }
 
     @Test
