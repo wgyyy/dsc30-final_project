@@ -76,6 +76,7 @@ public class UserTest {
         Instructor Dr_K = new Instructor("Dr.K");
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
         PiazzaExchange DSC20 = new PiazzaExchange(Dr_K, roster);
+        System.out.println(DSC20.userHashtable.size());
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);

@@ -63,6 +63,9 @@ public class PiazzaExchange {
         this.keywordForest = new Forest();
         this.postHashtable = new Hashtable<>(50);
         this.userHashtable = new Hashtable<>(50);
+        for (int i = 0; i < roster.size(); i ++) {
+            userHashtable.put(roster.get(i), new ArrayList<>());
+        }
         this.unansweredHashtable = new Hashtable<>(50);
         this.initializeForest();
     }
