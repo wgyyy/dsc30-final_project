@@ -1,3 +1,4 @@
+import com.sun.prism.shader.Solid_TextureYV12_AlphaTest_Loader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -439,6 +440,9 @@ public class UserTest {
         String placeHolder = ":-)";
         Tutor scott = new Tutor("A16145", "Scott");
         scott.enrollClass(DSC);
+        Note p00 = new Note(scott,placeHolder,placeHolder);
+        scott.addPost(DSC,p00);
+        System.out.println(DSC.unansweredHashtable.size());
         Question p1 = new Question(scott, placeHolder, placeHolder, "linkedlist", "DSC30", "P1");
         Question p2 = new Question(scott, placeHolder, placeHolder, "SLL", "DSC30", "p2");
         Question p3 = new Question(scott, placeHolder, placeHolder, "DLL", "DSC30", "p3");
@@ -469,8 +473,11 @@ public class UserTest {
         p1.setDate(newtime1);
         p2.setDate(newtime2);
         p3.setDate(newtime3);
-        System.out.println(p1.getDate());
-        p1.setDate(newtime2);
-        System.out.println(p1.getDate());
+        Question[] list = new Question[]{p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22};
+        for (int i = 0; i < list.length; i ++) {
+            scott.addPost(DSC, list[i]);
+        }
+        System.out.println(DSC.unansweredHashtable.size());
+
     }
 }

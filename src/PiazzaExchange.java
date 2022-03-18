@@ -242,14 +242,6 @@ public class PiazzaExchange {
         ArrayList<Post> list;
         String keyword;
         keyword = p.getKeyword();
-        /*
-        if (p.getKeyword() == null) {
-            keyword = "null";
-        } else {
-            keyword = p.getKeyword();
-        }
-
-         */
         if (!postHashtable.containsKey(keyword)){
             list = new ArrayList<>();
         } else {
@@ -264,7 +256,9 @@ public class PiazzaExchange {
         }
         list.add(p);
         userHashtable.put(p.poster,list);
-        this.unansweredHashtable.put(p.UID,p);
+        if (p.getClass() == Question.class) {
+            this.unansweredHashtable.put(p.UID, p);
+        }
         u.posts.add(p);
         u.numOfPostSubmitted++;
     }
@@ -277,12 +271,6 @@ public class PiazzaExchange {
      * @return the post array that contains every single post that has the keyword
      */
     public Post[] retrievePost(User u, String keyword){
-        /*
-        if (keyword == null) {
-            keyword = "null";
-        }
-
-         */
         ArrayList<Post> record_key = new ArrayList<>();
         ArrayList<Post> record_user = new ArrayList<>();
         for (Map.Entry<String,ArrayList<Post>> i : postHashtable.entrySet()) {
@@ -366,27 +354,6 @@ public class PiazzaExchange {
         if (!(u.getClass() == Instructor.class)) {
             throw new OperationDeniedException();
         }
-        /*
-        if (p.getKeyword() != null) {
-            if (postHashtable.containsKey(p.getKeyword())) {
-                if (postHashtable.get(p.getKeyword()).contains(p)) {
-                    postHashtable.get(p.getKeyword()).remove(p);
-                    userHashtable.get(p.getPoster()).remove(p);
-                    return true;
-                }
-            }
-        } else {
-            String search = "null";
-            if (postHashtable.containsKey(search)) {
-                if (postHashtable.get(search).contains(p)) {
-                    postHashtable.get(search).remove(p);
-                    userHashtable.get(p.getPoster()).remove(p);
-                    return true;
-                }
-            }
-        }
-
-         */
         if (postHashtable.containsKey(p.getKeyword())) {
             if (postHashtable.get(p.getKeyword()).contains(p)) {
                 postHashtable.get(p.getKeyword()).remove(p);
