@@ -76,7 +76,6 @@ public class UserTest {
         Instructor Dr_K = new Instructor("Dr.K");
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
         PiazzaExchange DSC20 = new PiazzaExchange(Dr_K, roster);
-        System.out.println(DSC20.userHashtable.size());
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
@@ -470,8 +469,8 @@ public class UserTest {
         p1.setDate(newtime1);
         p2.setDate(newtime2);
         p3.setDate(newtime3);
-        System.out.println(p1.answered);
-        scott.answerQuestion(p1,"y");
-        System.out.println(p1.answered);
+        System.out.println(p1.getDate());
+        p1.setDate(newtime2);
+        System.out.println(p1.getDate());
     }
 }
