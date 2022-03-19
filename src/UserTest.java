@@ -41,11 +41,11 @@ public class UserTest {
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
         me.enrollClass(DSC);
         assertEquals(false, me.courses.contains(DSC));
-        assertEquals(false, DSC.userHashtable.containsKey(me));
+        assertEquals(false, DSC.userHashmap.containsKey(me));
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         assertEquals(true, me.courses.contains(DSC));
-        assertEquals(true, DSC.userHashtable.containsKey(me));
+        assertEquals(true, DSC.userHashmap.containsKey(me));
     }
 
     @Test (expected = OperationDeniedException.class)
@@ -98,7 +98,7 @@ public class UserTest {
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
-        assertEquals(true,DSC.postHashtable.get(test.getKeyword()).contains(test));
+        assertEquals(true,DSC.postHashmap.get(test.getKeyword()).contains(test));
     }
 
     @Test
@@ -263,7 +263,12 @@ public class UserTest {
                 "ddddddddddddddddddddddddd"));
 
          */
+        System.out.println(DSC.postHashmap.get(test.getKeyword()).contains(test));
+        System.out.println(DSC.userHashmap.get(test.getPoster()).contains(test));
         assertEquals(test,Dr_K.deletePost(test,DSC));
+        System.out.println(DSC.postHashmap.get(test.getKeyword()).contains(test));
+        System.out.println(DSC.userHashmap.get(test.getPoster()).contains(test));
+
     }
 
     @Test
@@ -277,6 +282,10 @@ public class UserTest {
         Question test4 = new Question(me, "PA9q2", "What's the answer?", "PA9", "DSC30", "2");
         Instructor Dr_K = new Instructor("Dr.K");
         PiazzaExchange DSC = new PiazzaExchange(Dr_K, "DSC30", true);
+        DSC.deactivatePiazza(Dr_K);
+        System.out.println(DSC.status);
+        DSC.activatePiazza(Dr_K);
+        System.out.println(DSC.status);
         DSC.activatePiazza(Dr_K);
         me.enrollClass(DSC);
         me.addPost(DSC,test);
@@ -403,25 +412,34 @@ public class UserTest {
         Question p21 = new Question(scott, placeHolder, "a", "quadratic probing", "DSC30", "p21");
         Question p22 = new Question(me, placeHolder, "b", "quadratic probing", "DSC30", "p22");
         Question p23 = new Question(me, placeHolder, "c", "quadratic probing", "DSC30", "p23");
+        Note p24 = new Note(scott,"Midterm","p24");
         LocalDate newtime1 = LocalDate.of(2022, 2,20);
         LocalDate newtime2 = LocalDate.of(2022, 2,10);
         LocalDate newtime3 = LocalDate.of(2022, 2,5);
         LocalDate current = LocalDate.of(2022, 3,9);
-        p1.setDate(newtime1);
-        p2.setDate(newtime2);
+        p1.setDate(newtime2);
+        p2.setDate(newtime1);
         p3.setDate(newtime3);
-        me.endorsePost(p2);
-        Tom.endorsePost(p2);
-        scott.endorsePost(p2);
-        Jack.endorsePost(p2);
         Question[] list = new Question[]{p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22};
         for (int i = 0; i < list.length; i ++) {
             scott.addPost(DSC, list[i]);
         }
+        me.endorsePost(p2);
+        Tom.endorsePost(p2);
+        scott.endorsePost(p2);
+        Jack.endorsePost(p2);
         me.addPost(DSC,p23);
+        me.endorsePost(p23);
         Jack.endorsePost(p23);
         scott.endorsePost(p23);
-        DSC.answerQuestion(me,p21,"No");
+        Tom.endorsePost(p22);
+        Jack.endorsePost(p22);
+        Tom.endorsePost(p21);
+        DSC.answerQuestion(me,p14,"Yes");
+        me.addPost(DSC,p24);
+        p24.text ="No exam!";
+        System.out.println(p24.getText(me));
+        System.out.println(DSC.viewStats(scott));
     }
 
     @Test
@@ -442,7 +460,6 @@ public class UserTest {
         scott.enrollClass(DSC);
         Note p00 = new Note(scott,placeHolder,placeHolder);
         scott.addPost(DSC,p00);
-        System.out.println(DSC.unansweredHashtable.size());
         Question p1 = new Question(scott, placeHolder, placeHolder, "linkedlist", "DSC30", "P1");
         Question p2 = new Question(scott, placeHolder, placeHolder, "SLL", "DSC30", "p2");
         Question p3 = new Question(scott, placeHolder, placeHolder, "DLL", "DSC30", "p3");
@@ -477,7 +494,8 @@ public class UserTest {
         for (int i = 0; i < list.length; i ++) {
             scott.addPost(DSC, list[i]);
         }
-        System.out.println(DSC.unansweredHashtable.size());
+        System.out.println(p1.getDate().until(LocalDate.now()).getDays());
+        System.out.println(Arrays.toString(DSC.computeDailyPostStats()));
 
     }
 }
